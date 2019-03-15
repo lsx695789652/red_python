@@ -1,0 +1,94 @@
+{% extends '../layout.html' %}
+{% block mainbody %}
+    <table class="layui-hide" id="demo" lay-filter="test"></table>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+    <script>
+        layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function () {
+            var laydate = layui.laydate //日期
+                , laypage = layui.laypage //分页
+                , layer = layui.layer //弹层
+                , table = layui.table //表格
+            //向世界问个好
+            layer.msg('加载完成');
+            //执行一个 table 实例
+            table.render({
+                elem: '#demo'
+                , height: 420
+                , url: '/admin/select/' //数据接口
+                , title: '用户表'
+                , page: true //开启分页
+                , toolbar: 'default' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                , cols: [[ //表头
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
+                    , {field: 'name', title: '用户名', width: 80}
+                    , {field: 'password', title: '密码', width: 80}
+                ]]
+            });
+
+            //监听头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id)
+                    , data = checkStatus.data; //获取选中的数据
+                switch (obj.event) {
+                    case 'add':
+                        parent.layer.open({
+                            type: 2
+                            , title: "新增"
+                            , area: ['500px', '550px']
+                            , shade: 0.8
+                            , skin: 'layui-layer-rim'
+                            , moveType: 1
+                            , content: '/admin/detail/'
+                            , end: function () {
+                                location.reload();
+                            }
+                        });
+                        break;
+                    case 'update':
+                        if (data.length === 0) {
+                            layer.msg('请选择一行');
+                        } else if (data.length > 1) {
+                            layer.msg('只能同时编辑一个');
+                        } else {
+                            parent.layer.open({
+                                type: 2
+                                , title: "编辑"
+                                , area: ['500px', '550px']
+                                , shade: 0.8
+                                , skin: 'layui-layer-rim'
+                                , moveType: 1
+                                , content: '/admin/detail/?id=' + checkStatus.data[0].id
+                                , end: function () {
+                                    location.reload();
+                                }
+                            });
+                        }
+                        break;
+                    case 'delete':
+                        if (data.length === 0) {
+                            layer.msg('请选择一行');
+                        } else {
+                            $.get("/admin/delete/?id=" + checkStatus.data[0].id, function (result) {
+                                if (result == 200) {
+                                    layer.msg('删除成功！', {icon: 1});
+                                    window.location.reload();
+                                } else if (res == 404) {
+                                    layer.alert('id为空！', {icon: 5});
+                                } else if (res == 500) {
+                                    layer.alert('运行出错！', {icon: 5});
+                                }
+                            });
+
+                        }
+                        break;
+                }
+                ;
+            });
+        });
+    </script>
+{% endblock %}

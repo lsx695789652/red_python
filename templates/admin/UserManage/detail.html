@@ -1,0 +1,116 @@
+{% extends '../layout.html' %}
+{% block mainbody %}
+    <div style="width: 450px;margin-top: 5px;">
+        <form class="layui-form">
+            <input type="hidden" name="id" value="{{ id }}"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input name="username" class="layui-input" type="text" placeholder="请输入用户名" autocomplete="off"
+                           lay-verify="title" value="{{ username }}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input name="password" class="layui-input" type="password" placeholder="请输入密码" autocomplete="off"
+                           value="{{ password }}">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">爱好</label>
+                <div class="layui-input-block">
+                    <select name="interest" lay-filter="aihao">
+                        <option value=""></option>
+                        <option value="0">写作</option>
+                        <option value="1">阅读</option>
+                        <option value="2">游戏</option>
+                        <option value="3">音乐</option>
+                        <option value="4">旅行</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">复选框</label>
+                <div class="layui-input-block">
+                    <input name="like[write]" title="写作" type="checkbox">
+                    <input name="like[read]" title="阅读" type="checkbox">
+                    <input name="like[daze]" title="发呆" type="checkbox">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input name="close" type="checkbox" lay-skin="switch" lay-text="ON|OFF">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input name="sex" title="男" type="radio" checked="" value="男">
+                    <input name="sex" title="女" type="radio" value="女">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                    <textarea name="desc" class="layui-textarea" placeholder="请输入内容"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-filter="save" lay-submit="">提交</button>
+                    <button class="layui-btn layui-btn-primary" lay-filter="close" lay-submit="">关闭</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        layui.use(['form'], function () {
+            var form = layui.form,
+                layer = parent.layer === undefined ? layui.layer : top.layer
+            $ = layui.jquery;
+            form.on('submit(save)', function (data) {
+                var param = data.field;
+                if (param.length < 1) {
+                    layer.alert('数据为空', {icon: 5});
+                    return false
+                }
+                $.ajax({
+                    url: "/admin/save/",
+                    type: 'post',
+                    dataType: 'json',
+                    data: param,
+                    success: function (res) {
+                        if (res == 200) {
+                            layer.msg('保存成功！', {icon: 1});
+                            setTimeout(function () {
+                                var index = parent.layer.getFrameIndex(window.name)
+                                parent.layer.close(index)
+                            }, 1000);
+                        } else if (res == 101) {
+                            layer.alert('用户已存在！', {icon: 5});
+                        } else if (res == 404) {
+                            layer.alert('保存数据为空！', {icon: 5});
+                        } else if (res == 500) {
+                            layer.alert('运行出错！', {icon: 5});
+                        }
+                    },
+                    error: function () {
+                        layer.alert('操作失败！！！', {icon: 5});
+                    }
+                });
+                return false;
+            });
+            form.on('submit(close)', function (data) {
+                var index = parent.layer.getFrameIndex(window.name)
+                parent.layer.close(index)
+            });
+        });
+    </script>
+{% endblock %}

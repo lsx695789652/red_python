@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>后台管理</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "layui/css/layui.css" %}" media="all">
+    <link rel="stylesheet" type="text/css" href="{% static "css/global.css" %}" media="all">
+	<link rel="stylesheet" type="text/css" href="{% static "css/adminstyle.css" %}" media="all">
+
+    <script type="text/javascript" src="{% static "layui/layui.js" %}"></script>
+
+    <!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            var scale_width=$(document).width()/230.0;
+            var scale_height=$(document).height()/34;
+            $(document.body).css("zoom",Math.min(scale_width,scale_height));
+        });
+        $(window).resize(function () {
+            var scale_width=$(document).width()/230.0;
+            var scale_height=$(document).height()/34;
+            $(document.body).css("zoom",Math.min(scale_width,scale_height));
+        });
+    </script>-->
+    <script>
+        layui.config({
+            version: '1551352891258' //为了更新 js 缓存，可忽略
+        });
+    </script>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin" id="layui_layout">
+    {% include 'admin/head.html' %}
+
+    {% include 'admin/left.html' %}
+
+    {% block mainbody %}
+
+    {% endblock %}
+
+    {% include 'admin/footer.html' %}
+</div>
+<script type="text/javascript" src="{% static "js/index.js" %}"></script>
+<script type="text/javascript" src="{% static "js/larry.js" %}"></script>
+</body>
+</html>

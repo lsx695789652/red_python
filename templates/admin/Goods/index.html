@@ -1,0 +1,38 @@
+{% extends '../layout.html' %}
+{% block mainbody %}
+    <style>
+        .imgli {
+            margin: 10px 10px 0 10px;
+            float: left;
+            height: 200px;
+            overflow: hidden;
+            width: 180px;
+        }
+    </style>
+    <ul class="flow-default" id="LAY_demo2" style="height: 300px;"></ul>
+
+    <script>
+        layui.use('flow', function () {
+            var flow = layui.flow;
+            flow.load({
+                elem: '#LAY_demo2' //流加载容器
+                , isAuto: false
+                , isLazyimg: true
+                , done: function (page, next) { //加载下一页
+                    //模拟插入
+                    setTimeout(function () {
+                        var lis = [];
+                        $.get('/admin/goods_list/?page=' + page + '&size=10 ', function (data) {
+                            for (var i = 0; i < data.data.length; i++) {
+                                lis.push('<li class="imgli">' +
+                                    '<img lay-src="' + data.data[i].goods_summary + '" width="180">' +
+                                    '</li>')
+                            }
+                            next(lis.join(''), page < 10);
+                        });
+                    }, 500);
+                }
+            });
+        });
+    </script>
+{% endblock %}
